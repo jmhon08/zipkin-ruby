@@ -30,7 +30,7 @@ module ZipkinTracer
         if !trace_id.sampled? || !routable_request?(env)
           @app.call(env)
         else
-          @tracer.with_new_span(trace_id, "#{env[REQUEST_METHOD].to_s.downcase} ${route(env)}") do |span|
+          @tracer.with_new_span(trace_id, "#{env[REQUEST_METHOD].to_s.downcase} #{route(env)}") do |span|
             trace!(span, zipkin_env) { @app.call(env) }
           end
         end
