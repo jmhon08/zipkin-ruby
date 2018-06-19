@@ -54,7 +54,7 @@ module ZipkinTracer
             allow(app).to receive_message_chain('captures').and_return(["123", nil])
           end
 
-          it 'is true' do
+          it 'returns route' do
             expect(subject).to eq("/api/v1/messages/in_thread/:thread_id")
           end
         end
@@ -67,7 +67,7 @@ module ZipkinTracer
             allow(app).to receive_message_chain('captures').and_return(["123", "456", nil])
           end
 
-          it 'is true' do
+          it 'returns route' do
             expect(subject).to eq("/api/v1/messages/in_thread/:thread_id/in_message/:message_id")
           end
         end
@@ -80,7 +80,7 @@ module ZipkinTracer
             allow(app).to receive_message_chain('captures').and_return([nil])
           end
 
-          it 'is true' do
+          it 'returns route' do
             expect(subject).to eq("/api/v1/messages")
           end
         end
@@ -90,14 +90,14 @@ module ZipkinTracer
             allow(Rails).to receive_message_chain('application.routes.router.recognize') { nil }
           end
 
-          it 'is empty' do
+          it 'returns empty string' do
             expect(subject).to eq("")
           end
         end
       end
 
       context 'Rails not available' do
-        it 'is empty' do
+        it 'returns empty string' do
           expect(subject).to eq("")
         end
       end
