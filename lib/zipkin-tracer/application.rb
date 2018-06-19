@@ -26,7 +26,7 @@ module ZipkinTracer
         end
       end
       path_parts.join("/")
-    rescue ActionController::RoutingError
+    rescue
       ""
     end
 

@@ -40,7 +40,7 @@ describe ZipkinTracer::RackHandler do
   shared_examples_for 'traces the request' do
     it 'traces the request' do
       expect(ZipkinTracer::TraceContainer).to receive(:with_trace_id).and_call_original
-      expect(tracer).to receive(:with_new_span).ordered.with(anything, 'get').and_call_original
+      expect(tracer).to receive(:with_new_span).ordered.with(anything, 'get ').and_call_original
       expect_any_instance_of(Trace::Span).to receive(:record_tag).with('http.path', '/')
       expect_any_instance_of(Trace::Span).to receive(:record).with(Trace::Annotation::SERVER_RECV)
       expect_any_instance_of(Trace::Span).to receive(:record).with(Trace::Annotation::SERVER_SEND)

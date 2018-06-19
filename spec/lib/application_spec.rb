@@ -38,6 +38,71 @@ module ZipkinTracer
       end
     end
 
+    describe '.get_route' do
+      subject { Application.get_route("path", "METHOD") }
+
+      context 'Rails available' do
+        before do
+          stub_const('Rails', Class.new)
+        end
+
+        context 'route for /api/v1/messages/in_thread/123 is found' do
+          before do
+            app = double('journey', to_s: "/api/v1/messages/in_thread/123")
+            allow(Rails).to receive_message_chain('application.routes.router.recognize') { [[app]] }
+            allow(app).to receive_message_chain('names').and_return(["thread_id", "format"])
+            allow(app).to receive_message_chain('captures').and_return(["123", nil])
+          end
+
+          it 'is true' do
+            expect(subject).to eq("/api/v1/messages/in_thread/:thread_id")
+          end
+        end
+
+        context 'route for /api/v1/messages/in_thread/123/in_message/456 is found' do
+          before do
+            app = double('journey', to_s: "/api/v1/messages/in_thread/123/in_message/456")
+            allow(Rails).to receive_message_chain('application.routes.router.recognize') { [[app]] }
+            allow(app).to receive_message_chain('names').and_return(["thread_id", "message_id", "format"])
+            allow(app).to receive_message_chain('captures').and_return(["123", "456", nil])
+          end
+
+          it 'is true' do
+            expect(subject).to eq("/api/v1/messages/in_thread/:thread_id/in_message/:message_id")
+          end
+        end
+
+        context 'route for /api/v1/messages is found' do
+          before do
+            app = double('journey', to_s: "/api/v1/messages")
+            allow(Rails).to receive_message_chain('application.routes.router.recognize') { [[app]] }
+            allow(app).to receive_message_chain('names').and_return(["format"])
+            allow(app).to receive_message_chain('captures').and_return([nil])
+          end
+
+          it 'is true' do
+            expect(subject).to eq("/api/v1/messages")
+          end
+        end
+
+        context 'route is not found' do
+          before do
+            allow(Rails).to receive_message_chain('application.routes.router.recognize') { nil }
+          end
+
+          it 'is empty' do
+            expect(subject).to eq("")
+          end
+        end
+      end
+
+      context 'Rails not available' do
+        it 'is empty' do
+          expect(subject).to eq("")
+        end
+      end
+    end
+
     describe '.logger' do
       subject { Application.logger }
 
