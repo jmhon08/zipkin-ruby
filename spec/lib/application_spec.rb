@@ -46,42 +46,14 @@ module ZipkinTracer
           stub_const('Rails', Class.new)
         end
 
-        context 'route for /api/v1/messages/in_thread/123 is found' do
+        context 'route for /api/v1/messages/123 is found' do
           before do
-            app = double('journey', to_s: "/api/v1/messages/in_thread/123")
-            allow(Rails).to receive_message_chain('application.routes.router.recognize') { [[app]] }
-            allow(app).to receive_message_chain('names').and_return(["thread_id", "format"])
-            allow(app).to receive_message_chain('captures').and_return(["123", nil])
+            route = "/api/v1/messages/:id"
+            allow(Rails).to receive_message_chain('application.routes.router.recognize') { route }
           end
 
           it 'returns route' do
-            expect(subject).to eq("/api/v1/messages/in_thread/:thread_id")
-          end
-        end
-
-        context 'route for /api/v1/messages/in_thread/123/in_message/456 is found' do
-          before do
-            app = double('journey', to_s: "/api/v1/messages/in_thread/123/in_message/456")
-            allow(Rails).to receive_message_chain('application.routes.router.recognize') { [[app]] }
-            allow(app).to receive_message_chain('names').and_return(["thread_id", "message_id", "format"])
-            allow(app).to receive_message_chain('captures').and_return(["123", "456", nil])
-          end
-
-          it 'returns route' do
-            expect(subject).to eq("/api/v1/messages/in_thread/:thread_id/in_message/:message_id")
-          end
-        end
-
-        context 'route for /api/v1/messages is found' do
-          before do
-            app = double('journey', to_s: "/api/v1/messages")
-            allow(Rails).to receive_message_chain('application.routes.router.recognize') { [[app]] }
-            allow(app).to receive_message_chain('names').and_return(["format"])
-            allow(app).to receive_message_chain('captures').and_return([nil])
-          end
-
-          it 'returns route' do
-            expect(subject).to eq("/api/v1/messages")
+            expect(subject).to eq("/api/v1/messages/:id")
           end
         end
 
@@ -90,8 +62,8 @@ module ZipkinTracer
             allow(Rails).to receive_message_chain('application.routes.router.recognize') { nil }
           end
 
-          it 'returns empty string' do
-            expect(subject).to eq("")
+          it 'returns nil' do
+            expect(subject).to eq(nil)
           end
         end
       end

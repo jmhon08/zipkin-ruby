@@ -14,18 +14,10 @@ module ZipkinTracer
     def self.get_route(path_info, http_method)
       return "" unless defined?(Rails)
       req = Rack::Request.new("PATH_INFO" => path_info, "REQUEST_METHOD" => http_method)
-      path_data = Rails.application.routes.router.recognize(req) { |route, params| puts params.inspect }[0][0]
-      param_names = path_data.names.dup
-      param_values = path_data.captures
-      path_parts = path_data.to_s.split("/")
-      # Replace param values in path with param names
-      path_parts.each_with_index do |part, index|
-        if (part == param_values[0])
-          path_parts[index] = ":#{param_names.shift}"
-          param_values.shift
-        end
-      end
-      path_parts.join("/")
+      # Returns a string like /some/path/:id
+      Rails.application.routes.router.recognize(req) { |route|
+        return route.path.spec.to_s
+      }
     rescue
       ""
     end
